@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import { ZyphraClient } from "@zyphra/client";
+import { Readable } from 'stream';
 const app = express()
 
 app.use(cors())
@@ -9,7 +10,7 @@ app.use(express.urlencoded({extended: true, limit: "100mb"}));
 app.use(express.json({limit: "100mb"}))
 
 
-app.post("/jawad_voice_generating", async (req, resp) => {
+app.post("/jawad_voice_generating", async (req, res) => {
     const { text, sampleAudio, apiKey } = req.body;
     try {
         const client = new ZyphraClient({ apiKey });
@@ -19,29 +20,31 @@ app.post("/jawad_voice_generating", async (req, resp) => {
             language_iso_code: 'en-us',
             mime_type: 'audio/mpeg',
             model: 'zonos-v0.1-hybrid',
-            vqscore: 0.6,       
-            speaker_noised: true,  
+            vqscore: 0.6,
+            speaker_noised: true,
             speaking_rate: 15
-            
         });
 
-        const arrayBuffer = await audioData.arrayBuffer(); 
-        const buffer = Buffer.from(arrayBuffer); 
+        const arrayBuffer = await audioData.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
-        const fileName = "jawad_ai.mp3";
-        resp.set({
-            'Content-Disposition': `attachment; filename="${fileName}"`,
-            'Content-Type': 'audio/mpeg',
+        res.set({
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': 'inline; filename="jawad_ai.mp3"',
         });
+        console.log(buffer)
 
-        resp.status(201).send(buffer);
+        const stream = new Readable();
+        stream.push(buffer);
+        stream.push(null);
+        stream.pipe(res);
 
     } catch (error) {
-        console.log(error)
         console.error('Error generating voice:', error.message);
-        return resp.json({success: false, message: "Error while generating the audio", error})
+        res.status(500).json({ success: false, message: "Error while generating the audio", error });
     }
-})
+});
+
 
 app.get("/health", async (req, resp) => {
     return resp.json({success: true, message: "Working Great", data: [{name: "Jawad"}]})
