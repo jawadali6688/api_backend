@@ -1,0 +1,20 @@
+{
+  "name": "my_ai_backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@zyphra/client": "^1.0.3",
+    "base64-arraybuffer": "^1.0.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
