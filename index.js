@@ -20,9 +20,11 @@ app.post("/jawad_voice_generating", async (req, res) => {
             language_iso_code: 'en-us',
             mime_type: 'audio/mpeg',
             model: 'zonos-v0.1-hybrid',
-            vqscore: 0.6,
+            vqscore: 0.8,
             speaker_noised: true,
-            speaking_rate: 15
+            speaking_rate: 15,
+            fmax: 15000,
+            pitch_std: 80
         });
 
         const arrayBuffer = await audioData.arrayBuffer();
